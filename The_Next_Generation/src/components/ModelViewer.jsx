@@ -1,26 +1,24 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Stage } from "@react-three/drei";
+import { OrbitControls, Environment } from "@react-three/drei";
 import { Suspense } from "react";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { useLoader } from "@react-three/fiber";
+import { useGLTF } from "@react-three/drei";
 
-function MyModel() {
-  const gltf = useLoader(GLTFLoader, "/models/test.fbx"); // đặt trong public/models/
-  return <primitive object={gltf.scene} scale={1.5} />;
+function Model({ path }) {
+  const { scene } = useGLTF(path);
+  return <primitive object={scene} scale={1.5} />;
 }
 
-export default function ModelViewer() {
+export default function ModelViewer({ modelPath }) {
   return (
-    <Canvas camera={{ position: [2, 2, 5], fov: 50 }}>
-      <ambientLight intensity={0.5} />
-      <Suspense fallback={null}>
-        <Stage environment="city" intensity={0.6}>
-          <MyModel />
-        </Stage>
-        <OrbitControls enableZoom={true} />
-      </Suspense>
-    </Canvas>
+    <div className="w-full h-[500px] rounded-md overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800">
+      <Canvas camera={{ position: [0, 1, 5], fov: 50 }}>
+        <ambientLight intensity={1} />
+        <Suspense fallback={null}>
+          <Model path={modelPath} />
+          <Environment preset="sunset" />
+        </Suspense>
+        <OrbitControls />
+      </Canvas>
+    </div>
   );
 }
-// This component uses React Three Fiber to render a 3D model.
-// It includes ambient lighting, a stage environment, and orbit controls for interaction.
